@@ -10,8 +10,11 @@ import os
 # However, in stores case, the stores app may not be loaded into the main application.
 #
 
-OSCAR_STORES_DEFAULT_TEMPLATE_DIR      = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'templates')
+OSCAR_STORES_DEFAULT_TEMPLATE_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'templates')
 
-OSCAR_STORES_MAIN_TEMPLATE_DIR      = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), 'templates/oscar')
+OSCAR_STORES_MAIN_TEMPLATE_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'templates/oscar')
+
+OSCAR_STORES_STATIC_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'static')
