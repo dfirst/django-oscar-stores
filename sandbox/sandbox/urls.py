@@ -1,7 +1,8 @@
 from django.conf import settings
-from django.conf.urls.static import static
-from django.conf.urls import include, url
 from django.contrib import admin
+from django.conf.urls import include, url
+from django.conf.urls.static import static
+from django.views.i18n import javascript_catalog
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from oscar.app import application
 
@@ -20,7 +21,8 @@ urlpatterns = [
     url(r'^', include(application.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^i18n/', include('django.conf.urls.i18n')),
-    url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+    url(r'^jsi18n/$', javascript_catalog, js_info_dict,
+        name='javascript_catalog'),
     url(r'^i18n/', include('django.conf.urls.i18n')),
 ]
 
