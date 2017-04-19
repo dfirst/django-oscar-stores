@@ -75,7 +75,6 @@ class OpeningPeriodForm(forms.ModelForm):
             ),
         }
 
-
     def __init__(self, *args, **kwargs):
         self.weekday = kwargs.pop('weekday')
         self.store = kwargs.pop('store')
@@ -94,6 +93,7 @@ class OpeningPeriodForm(forms.ModelForm):
 
 
 class DashboardStoreSearchForm(forms.Form):
+
     name = forms.CharField(label=_('Store name'), required=False)
     address = forms.CharField(label=_('Address'), required=False)
 
@@ -155,9 +155,8 @@ class OpeningPeriodFormset(modelforms.BaseInlineFormSet):
 
         self.open = self.openform['open']
 
-        super(OpeningPeriodFormset, self).__init__(data=data, instance=instance,
-                                                   prefix=prefix,
-                                                   queryset=queryset)
+        super(OpeningPeriodFormset, self).__init__(
+            data=data, instance=instance, prefix=prefix, queryset=queryset)
         self.form_kwargs['store'] = self.instance
         self.form_kwargs['weekday'] = self.weekday
 

@@ -91,7 +91,8 @@ class StoreListView(generic.ListView):
         ctx = super(StoreListView, self).get_context_data(**kwargs)
 
         ctx['form'] = self.form
-        ctx['all_stores'] = self.model.objects.select_related('group', 'address').all()
+        ctx['all_stores'] = self.model.objects.select_related(
+            'group', 'address').all()
 
         if hasattr(self.form, 'point') and self.form.point:
             coords = self.form.point.coords

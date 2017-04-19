@@ -141,12 +141,16 @@ class AbstractOpeningPeriod(models.Model):
         _("Start"),
         null=True,
         blank=True,
-        help_text=_("Leaving start and end time empty is displayed as 'Closed'"))
+        help_text=_(
+            "Leaving start and end time empty is displayed as 'Closed'")
+    )
     end = models.TimeField(
         _("End"),
         null=True,
         blank=True,
-        help_text=_("Leaving start and end time empty is displayed as 'Closed'"))
+        help_text=_(
+            "Leaving start and end time empty is displayed as 'Closed'")
+    )
 
     def __str__(self):
         return u"%s: %s to %s" % (self.weekday, self.start, self.end)
