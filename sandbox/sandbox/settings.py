@@ -9,7 +9,6 @@ PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
 location = lambda x: os.path.join(PROJECT_DIR, x)
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 THUMBNAIL_DEBUG = DEBUG
 
 ADMINS = (
@@ -85,7 +84,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'oscar.apps.basket.middleware.BasketMiddleware',
 )
 
@@ -103,6 +102,7 @@ TEMPLATES = [
             location('templates'),
             OSCAR_STORES_DEFAULT_TEMPLATE_DIR,
             OSCAR_STORES_MAIN_TEMPLATE_DIR,
+            OSCAR_MAIN_TEMPLATE_DIR
         ],
         'OPTIONS': {
             # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
