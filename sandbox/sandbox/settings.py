@@ -1,5 +1,9 @@
 # Django settings for sandbox project.
 import os
+from oscar import OSCAR_MAIN_TEMPLATE_DIR
+from stores import (OSCAR_STORES_DEFAULT_TEMPLATE_DIR,
+                    OSCAR_STORES_MAIN_TEMPLATE_DIR)
+
 
 PROJECT_DIR = os.path.join(os.path.dirname(__file__), '..')
 location = lambda x: os.path.join(PROJECT_DIR, x)
@@ -75,13 +79,6 @@ STATICFILES_FINDERS = (
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'sba9ti)x&amp;^fkod-g91@^_yi6y_#&amp;3mo#m5@n)i&amp;k+0h=+zsfkb'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
-
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -92,32 +89,47 @@ MIDDLEWARE_CLASSES = (
     'oscar.apps.basket.middleware.BasketMiddleware',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.request",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.contrib.messages.context_processors.messages",
-    # Oscar specific
-    'oscar.apps.search.context_processors.search_form',
-    'oscar.apps.promotions.context_processors.promotions',
-    'oscar.apps.checkout.context_processors.checkout',
-    'oscar.apps.customer.notifications.context_processors.notifications',
-    'oscar.core.context_processors.metadata',
-)
-
 ROOT_URLCONF = 'sandbox.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'sandbox.wsgi.application'
 
-from oscar import OSCAR_MAIN_TEMPLATE_DIR
-TEMPLATE_DIRS = (
-    location('templates'),
-    OSCAR_MAIN_TEMPLATE_DIR,
-)
+TEMPLATES = [
+    {
+        # See: https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-TEMPLATES-BACKEND
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-dirs
+        'DIRS': [
+            location('templates'),
+            OSCAR_STORES_DEFAULT_TEMPLATE_DIR,
+            OSCAR_STORES_MAIN_TEMPLATE_DIR,
+        ],
+        'OPTIONS': {
+            # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-loaders
+            # https://docs.djangoproject.com/en/dev/ref/templates/api/#loader-types
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
+            # See: https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                # Oscar specific
+                'oscar.apps.search.context_processors.search_form',
+                'oscar.apps.promotions.context_processors.promotions',
+                'oscar.apps.checkout.context_processors.checkout',
+                'oscar.core.context_processors.metadata',
+                'oscar.apps.customer.notifications.context_processors.notifications',
+            ],
+        },
+    },
+]
 
 INSTALLED_APPS = [
     'django.contrib.auth',
