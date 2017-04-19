@@ -139,6 +139,7 @@ class OpeningPeriodFormset(modelforms.BaseInlineFormSet):
     model = OpeningPeriod
     validate_min = True
     validate_max = True
+    form = OpeningPeriodForm
 
     def __init__(self, weekday, data, instance):
         self.weekday = weekday
@@ -157,14 +158,11 @@ class OpeningPeriodFormset(modelforms.BaseInlineFormSet):
         super(OpeningPeriodFormset, self).__init__(data=data, instance=instance,
                                                    prefix=prefix,
                                                    queryset=queryset)
+        self.form_kwargs['store'] = self.instance
+        self.form_kwargs['weekday'] = self.weekday
 
     def get_weekday_display(self):
         return force_text(OpeningPeriod.WEEK_DAYS[self.weekday])
-
-    def form(self, *args, **kwargs):
-        form = OpeningPeriodForm(
-            *args, store=self.instance, weekday=self.weekday, **kwargs)
-        return form
 
     def is_valid(self):
         return super(OpeningPeriodFormset, self).is_valid()
