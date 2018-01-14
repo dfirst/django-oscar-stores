@@ -16,14 +16,13 @@ js_info_dict = {
 }
 
 urlpatterns = [
-    url(r'^dashboard/stores/', include(dashboard_app.urls)),
-    url(r'^stores/', include(stores_app.urls)),
-    url(r'^', include(application.urls)),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^dashboard/stores/', dashboard_app.urls),
+    url(r'^stores/', stores_app.urls),
+    url(r'^', application.urls),
+    url(r'^admin/', admin.site.urls),
     url(r'^i18n/', include('django.conf.urls.i18n')),
     url(r'^jsi18n/$', javascript_catalog, js_info_dict,
-        name='javascript_catalog'),
-    url(r'^i18n/', include('django.conf.urls.i18n')),
+        name="javascript-catalogue"),
 ]
 
 

@@ -1,16 +1,16 @@
-from django import forms
 from django.contrib.gis import forms as gisforms
-from django.forms import models as modelforms
-from django.db.models import Q
+from django import forms, VERSION
+from django.conf import settings
 from django.contrib.gis.forms import fields
+from django.contrib.gis.geoip import HAS_GEOIP
+from django.db.models import Q
+from django.forms import models as modelforms
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.gis.geoip import HAS_GEOIP
-from django.conf import settings
 from oscar.core.loading import get_model
 
+
 OpeningPeriod = get_model('stores', 'OpeningPeriod')
-assert OpeningPeriod
 
 
 class StoreAddressForm(forms.ModelForm):
@@ -135,11 +135,11 @@ class OpeningPeriodFormset(modelforms.BaseInlineFormSet):
     min_num = 0
     max_num = 30  # Reasonably safe number of maximum period intervals per day
     absolute_max = 30
-    fk = [f for f in OpeningPeriod._meta.fields if f.name == 'store'][0]
+    fk = [f for f in OpeningPeriod._meta.get_fields() if f.name == 'store'][0]
+    form = OpeningPeriodForm
     model = OpeningPeriod
     validate_min = True
     validate_max = True
-    form = OpeningPeriodForm
 
     def __init__(self, weekday, data, instance):
         self.weekday = weekday
@@ -157,11 +157,20 @@ class OpeningPeriodFormset(modelforms.BaseInlineFormSet):
 
         super(OpeningPeriodFormset, self).__init__(
             data=data, instance=instance, prefix=prefix, queryset=queryset)
-        self.form_kwargs['store'] = self.instance
-        self.form_kwargs['weekday'] = self.weekday
 
     def get_weekday_display(self):
         return force_text(OpeningPeriod.WEEK_DAYS[self.weekday])
+
+    # Backward compatibility with Django 1.8, which doesn't have get_form_kwargs
+    if VERSION < (1, 9):
+        def form(self, *args, **kwargs):
+            return OpeningPeriodForm(*args, store=self.instance, weekday=self.weekday, **kwargs)
+
+    def get_form_kwargs(self, index):
+        return {
+            'store': self.instance,
+            'weekday': self.weekday,
+        }
 
     def is_valid(self):
         return super(OpeningPeriodFormset, self).is_valid()
