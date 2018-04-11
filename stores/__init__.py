@@ -20,3 +20,6 @@ OSCAR_STORES_MAIN_TEMPLATE_DIR = os.path.join(
 
 OSCAR_STORES_STATIC_DIR = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), 'static')
+
+OSCAR_STORES_LOCALE_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), 'locale')
