@@ -18,7 +18,7 @@ setup(
     packages=find_packages(exclude=["sandbox*", "tests*"]),
     include_package_data=True,
     install_requires=[
-        'django-oscar==1.6.2',
+        'django-oscar==1.6.4',
         'requests>=1.1',
     ],
 
