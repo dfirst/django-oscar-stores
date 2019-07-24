@@ -1,15 +1,24 @@
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.views import generic
-from oscar.core.loading import get_model
+from oscar.core.loading import get_model, get_class
 
-from stores.forms import StoreSearchForm
 from stores.utils import get_geodetic_srid, get_geographic_srid
 
+
+StoreSearchForm = get_class('stores.forms', 'StoreSearchForm', module_prefix='')
 Store = get_model('stores', 'store')
 
 
-class StoreListView(generic.ListView):
+class MapsContextMixin(object):
+
+    def get_context_data(self, **kwargs):
+        ctx = super(MapsContextMixin, self).get_context_data(**kwargs)
+        ctx['maps_api_key'] = settings.GOOGLE_MAPS_API_KEY
+        return ctx
+
+
+class StoreListView(MapsContextMixin, generic.ListView):
     model = Store
     template_name = 'stores/index.html'
     context_object_name = 'store_list'
@@ -104,7 +113,7 @@ class StoreListView(generic.ListView):
         return ctx
 
 
-class StoreDetailView(generic.DetailView):
+class StoreDetailView(MapsContextMixin, generic.DetailView):
     model = Store
     template_name = 'stores/detail.html'
     context_object_name = 'store'

@@ -1,114 +1,98 @@
 import os
 
-from django.conf import settings
-from oscar.defaults import OSCAR_SETTINGS
-from oscar import OSCAR_MAIN_TEMPLATE_DIR, get_core_apps
-from stores import OSCAR_STORES_MAIN_TEMPLATE_DIR
+import oscar
+from oscar.defaults import *  # noqa
 
+OSCAR_MAIN_TEMPLATE_DIR = os.path.join(os.path.dirname(os.path.abspath(oscar.__file__)), 'templates/oscar')
 
-ROOT_DIR = os.path.join(os.path.dirname(__file__), '..')
-location = lambda x: os.path.join(ROOT_DIR, x)
-GEOIP_PATH = location('sandbox/geoip')
-GEOIP_COUNTRY = location('sandbox/geoip/GeoIP.dat')
-GEOIP_CITY = location('sandbox/geoip/GeoIPCity.dat')
+location = lambda x: os.path.join(
+    os.path.dirname(os.path.realpath(__file__)), x)
 
+SECRET_KEY = 'not a secret'
 
-def pytest_configure():
-    location = lambda x: os.path.join(
-        os.path.dirname(os.path.realpath(__file__)), x)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'oscar_stores',
+    }
+}
 
-    test_settings = OSCAR_SETTINGS.copy()
-    test_settings.update(dict(
-        DATABASES={
-            'default': {
-                'ENGINE': 'django.contrib.gis.db.backends.postgis',
-                'NAME': 'oscar_stores',
-                'USER': 'sample_role',
-                'PASSWORD': 'sample_password',
-                'HOST': '127.0.0.1',
-                'PORT': 5432,
-            }
-        },
-        SITE_ID=1,
-        MEDIA_ROOT=location('public/media'),
-        MEDIA_URL='/media/',
-        STATIC_URL='/static/',
-        STATICFILES_DIRS=(location('static/'),),
-        STATIC_ROOT=location('public'),
-        STATICFILES_FINDERS=(
-            'django.contrib.staticfiles.finders.FileSystemFinder',
-            'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-        ),
-        TEMPLATES=[
-            {
-                'BACKEND': 'django.template.backends.django.DjangoTemplates',
-                'DIRS': [
-                    location('templates'),
-                    OSCAR_STORES_MAIN_TEMPLATE_DIR,
-                    OSCAR_MAIN_TEMPLATE_DIR
-                ],
-                'OPTIONS': {
-                    'loaders': [
-                        'django.template.loaders.filesystem.Loader',
-                        'django.template.loaders.app_directories.Loader',
-                    ],
-                    'context_processors': [
-                        'django.contrib.auth.context_processors.auth',
-                        'django.template.context_processors.request',
-                        'django.template.context_processors.debug',
-                        'django.template.context_processors.i18n',
-                        'django.template.context_processors.media',
-                        'django.template.context_processors.static',
-                        'django.contrib.messages.context_processors.messages',
-                        # Oscar specific
-                        'oscar.apps.search.context_processors.search_form',
-                        'oscar.apps.promotions.context_processors.promotions',
-                        'oscar.apps.checkout.context_processors.checkout',
-                        'oscar.core.context_processors.metadata',
-                        'oscar.apps.customer.notifications.context_processors.notifications',
-                    ],
-                }
-            }
+SITE_ID = 1
+
+MEDIA_ROOT = location('public/media')
+MEDIA_URL = '/media/'
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (location('static/'),)
+STATIC_ROOT = location('public')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            location('templates'),
+            OSCAR_MAIN_TEMPLATE_DIR,
         ],
-        MIDDLEWARE_CLASSES=(
-            'django.middleware.common.CommonMiddleware',
-            'django.contrib.sessions.middleware.SessionMiddleware',
-            'django.middleware.csrf.CsrfViewMiddleware',
-            'django.contrib.auth.middleware.AuthenticationMiddleware',
-            'django.contrib.messages.middleware.MessageMiddleware',
-            'oscar.apps.basket.middleware.BasketMiddleware',
-        ),
-        ROOT_URLCONF='sandbox.sandbox.urls',
-        INSTALLED_APPS=[
-            'django.contrib.auth',
-            'django.contrib.contenttypes',
-            'django.contrib.sessions',
-            'django.contrib.sites',
-            'django.contrib.messages',
-            'django.contrib.staticfiles',
-            'django.contrib.admin',
-            'django.contrib.gis',
-            'django.contrib.flatpages',
-            'widget_tweaks',
-        ] + get_core_apps() + [
-            'stores',
-        ],
-        AUTHENTICATION_BACKENDS=(
-            'oscar.apps.customer.auth_backends.EmailBackend',
-            'django.contrib.auth.backends.ModelBackend',
-        ),
-        LOGIN_REDIRECT_URL='/accounts/',
-        APPEND_SLASH=True,
-        HAYSTACK_CONNECTIONS={
-            'default': {
-                'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-            },
-        },
-        GEOIP_PATH = GEOIP_PATH,
-        GEOIP_COUNTRY = GEOIP_COUNTRY,
-        GEOIP_CITY = GEOIP_CITY,
-        COMPRESS_ENABLED=False,
-        TEST_RUNNER='django.test.runner.DiscoverRunner',
-    ))
+        'OPTIONS': {
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.request',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        }
+    }
+]
 
-    settings.configure(**test_settings)
+MIDDLEWARE = (
+    'django.middleware.common.CommonMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'oscar.apps.basket.middleware.BasketMiddleware',
+)
+
+ROOT_URLCONF = 'sandbox.sandbox.urls'
+
+TEMPLATE_DIRS = (
+    location('templates'),
+    OSCAR_MAIN_TEMPLATE_DIR,
+)
+
+INSTALLED_APPS = oscar.INSTALLED_APPS + [
+    'django.contrib.gis',
+    'sorl.thumbnail',
+    'stores',
+    'stores.dashboard',
+]
+
+AUTHENTICATION_BACKENDS = (
+    'oscar.apps.customer.auth_backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+LOGIN_REDIRECT_URL = '/accounts/'
+
+APPEND_SLASH = True
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
+    },
+}
+
+GEOIP_PATH = 'sandbox/geoip'
+GOOGLE_MAPS_API_KEY = 'test'

@@ -1,6 +1,6 @@
-from django.contrib.gis.db.models import GeoManager, PointField
+from django.contrib.gis.db.models import Manager, PointField
 from django.core.exceptions import ValidationError
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext as _
@@ -16,7 +16,8 @@ class AbstractStoreAddress(AbstractAddress):
     store = models.OneToOneField(
         'stores.Store',
         verbose_name=_("Store"),
-        related_name="address")
+        related_name="address",
+        on_delete=models.CASCADE)
 
     class Meta:
         abstract = True
@@ -84,6 +85,7 @@ class AbstractStore(models.Model):
         'stores.StoreGroup',
         related_name='stores',
         verbose_name=_("Group"),
+        on_delete=models.SET_NULL,
         null=True,
         blank=True)
 
@@ -129,7 +131,7 @@ class AbstractOpeningPeriod(models.Model):
         SUNDAY: _("Sunday"),
     }
     store = models.ForeignKey('stores.Store', verbose_name=_("Store"),
-                              related_name='opening_periods')
+                              related_name='opening_periods', on_delete=models.CASCADE)
 
     weekday_choices = [(k, v) for k, v in WEEK_DAYS.items()]
     weekday = models.PositiveIntegerField(
@@ -173,11 +175,15 @@ class AbstractStoreStock(models.Model):
     store = models.ForeignKey(
         'stores.Store',
         verbose_name=_("Store"),
-        related_name='stock')
+        related_name='stock',
+        on_delete=models.CASCADE
+    )
     product = models.ForeignKey(
         'catalogue.Product',
         verbose_name=_("Product"),
-        related_name="store_stock")
+        related_name="store_stock",
+        on_delete = models.CASCADE
+    )
 
     # Stock level information
     num_in_stock = models.PositiveIntegerField(
@@ -215,7 +221,7 @@ class AbstractStoreStock(models.Model):
         verbose_name_plural = _("Store stock records")
         unique_together = ("store", "product")
 
-    objects = GeoManager()
+    objects = Manager()
 
     def __str__(self):
         if self.store and self.product:

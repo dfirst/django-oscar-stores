@@ -100,7 +100,7 @@ TEMPLATES = [
             location('templates'),
             OSCAR_STORES_DEFAULT_TEMPLATE_DIR,
             OSCAR_STORES_MAIN_TEMPLATE_DIR,
-            oscar.OSCAR_MAIN_TEMPLATE_DIR,
+            os.path.join(os.path.dirname(os.path.abspath(oscar.__file__)), 'templates/oscar'),
         ],
         'OPTIONS': {
             'loaders': [
@@ -139,14 +139,16 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.gis',
     'django.contrib.flatpages',
+    'sorl.thumbnail',
     'django_extensions',
     'debug_toolbar',
-    'stores',
     'widget_tweaks',
+    'stores',
+    'stores.dashboard',
 ]
 
 
-INSTALLED_APPS += oscar.get_core_apps()
+INSTALLED_APPS += oscar.INSTALLED_APPS
 
 AUTHENTICATION_BACKENDS = (
     'oscar.apps.customer.auth_backends.EmailBackend',

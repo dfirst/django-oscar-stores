@@ -1,22 +1,28 @@
 from django.conf.urls import url
-from oscar.core.application import Application
-from oscar.views.decorators import staff_member_required
 
-from stores.dashboard import views
+from oscar.core.application import OscarDashboardConfig
+from oscar.core.loading import get_class
 
 
-class StoresDashboardApplication(Application):
-    name = 'stores-dashboard'
+class StoresDashboardConfig(OscarDashboardConfig):
 
-    store_list_view = views.StoreListView
-    store_create_view = views.StoreCreateView
-    store_update_view = views.StoreUpdateView
-    store_delete_view = views.StoreDeleteView
+    name = 'stores.dashboard'
+    label = 'stores_dashboard'
 
-    store_group_list_view = views.StoreGroupListView
-    store_group_create_view = views.StoreGroupCreateView
-    store_group_update_view = views.StoreGroupUpdateView
-    store_group_delete_view = views.StoreGroupDeleteView
+    namespace = 'stores-dashboard'
+
+    default_permissions = ['is_staff']
+
+    def ready(self):
+        self.store_list_view = get_class('stores.dashboard.views', 'StoreListView', module_prefix='')
+        self.store_create_view = get_class('stores.dashboard.views', 'StoreCreateView', module_prefix='')
+        self.store_update_view = get_class('stores.dashboard.views', 'StoreUpdateView', module_prefix='')
+        self.store_delete_view = get_class('stores.dashboard.views', 'StoreDeleteView', module_prefix='')
+
+        self.store_group_list_view = get_class('stores.dashboard.views', 'StoreGroupListView', module_prefix='')
+        self.store_group_create_view = get_class('stores.dashboard.views', 'StoreGroupCreateView', module_prefix='')
+        self.store_group_update_view = get_class('stores.dashboard.views', 'StoreGroupUpdateView', module_prefix='')
+        self.store_group_delete_view = get_class('stores.dashboard.views', 'StoreGroupDeleteView', module_prefix='')
 
     def get_urls(self):
         urls = [
@@ -62,9 +68,3 @@ class StoresDashboardApplication(Application):
             ),
         ]
         return self.post_process_urls(urls)
-
-    def get_url_decorator(self, url_name):
-        return staff_member_required
-
-
-application = StoresDashboardApplication()
